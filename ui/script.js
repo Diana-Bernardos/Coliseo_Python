@@ -64,7 +64,7 @@ async function showTurnOverlay(who) {
   overlay.classList.remove('hidden');
 
   if (who === 'warrior') {
-    img.src = 'assets/warrior.png';
+    img.src = 'assets/warrior.jpg';
     text.textContent = `⚔️ TURNO DE ${STATE.playerName.toUpperCase()}`;
     text.className = 'turn-text warrior-text';
     // Highlight warrior portrait
@@ -323,7 +323,7 @@ function endGame(winner) {
   const endLog = $('end-log');
 
   if (winner === 'warrior') {
-    endPortrait.innerHTML = `<img src="assets/warrior.png" alt="Guerrero Victorioso"/>`;
+    endPortrait.innerHTML = `<img src="assets/warrior.jpg" alt="Guerrero Victorioso"/>`;
     resultTitle.textContent = `⚔️ ¡VICTORIA!`;
     resultSub.textContent = `¡${STATE.playerName} ha derrotado a Thrall!`;
   } else if (winner === 'orc') {
