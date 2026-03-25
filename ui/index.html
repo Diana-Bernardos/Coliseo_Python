@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>⚔️ Coliseo de Batalla RPG</title>
+  <meta name="description" content="Simulador de batalla turn-based entre Guerrero y Orco con efectos visuales épicos medievales."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- PANTALLA DE INICIO -->
+  <div id="intro-screen" class="screen active">
+    <div class="intro-bg"></div>
+    <div class="intro-content">
+      <h1 class="title-main">⚔️ COLISEO DE BATALLA</h1>
+      <p class="title-sub">El campo de batalla te espera</p>
+      <!-- Portraits de presentación con transición -->
+      <div class="intro-portraits">
+        <div class="portrait-card warrior-card" id="intro-warrior">
+          <img src="assets/warrior.jpg" alt="Guerrero" />
+          <div class="portrait-glow warrior-glow"></div>
+          <span class="portrait-label">GUERRERO</span>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="portrait-card orc-card" id="intro-orc">
+          <img src="assets/orc.jpg" alt="Orco" />
+          <div class="portrait-glow orc-glow"></div>
+          <span class="portrait-label">THRALL</span>
+        </div>
+      </div>
+      <div class="name-input-container">
+        <label for="player-name" class="input-label">✦ Nombre de tu Guerrero ✦</label>
+        <input type="text" id="player-name" placeholder="Ej: Arturo" maxlength="20"/>
+      </div>
+      <button id="start-btn" class="btn-gold" onclick="startGame()">⚔️ COMENZAR BATALLA</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA DE BATALLA -->
+  <div id="battle-screen" class="screen">
+    <div class="battle-bg"></div>
+    <!-- Overlays de turno -->
+    <div id="turn-overlay" class="turn-overlay hidden">
+      <div class="turn-portrait-container">
+        <img id="turn-portrait-img" src="" alt="turno"/>
+        <div id="turn-flash" class="turn-flash"></div>
+      </div>
+      <div id="turn-text" class="turn-text"></div>
+    </div>
+
+    <!-- Header con turno actual -->
+    <header class="battle-header">
+      <div class="turn-badge">TURNO <span id="turn-number">1</span> / 15</div>
+    </header>
+
+    <!-- Arena de batalla -->
+    <main class="battle-arena">
+
+      <!-- Tarjeta del Guerrero (izquierda) -->
+      <div class="fighter-card warrior-side" id="card-warrior">
+        <div class="fighter-portrait" id="portrait-warrior">
+          <img src="assets/warrior.jpg" alt="Guerrero"/>
+          <div class="active-frame warrior-frame"></div>
+        </div>
+        <div class="fighter-info">
+          <div class="fighter-name" id="warrior-name">GUERRERO</div>
+          <div class="hp-bar-container">
+            <div class="hp-label">❤️ VIDA</div>
+            <div class="hp-bar-bg">
+              <div class="hp-bar warrior-hp" id="warrior-hp-bar"></div>
+            </div>
+            <div class="hp-value" id="warrior-hp-value">100 / 100</div>
+          </div>
+          <div class="shield-badge">🛡️ Escudo: <span id="warrior-shield">10</span></div>
+        </div>
+      </div>
+
+      <!-- Centro: batalla log y acciones -->
+      <div class="battle-center">
+        <div class="battle-log-container">
+          <h3 class="log-title">📜 Crónica de Batalla</h3>
+          <div id="battle-log" class="battle-log"></div>
+        </div>
+        <!-- Acciones del jugador -->
+        <div id="action-panel" class="action-panel">
+          <p class="action-prompt">¡Es tu turno, elige tu acción!</p>
+          <div class="action-buttons">
+            <button id="btn-attack" class="btn-action btn-attack" onclick="playerAction('attack')">
+              <span class="action-icon">⚔️</span>
+              <span class="action-name">ATAQUE</span>
+              <span class="action-desc">18–28 daño</span>
+            </button>
+            <button id="btn-fury" class="btn-action btn-fury" onclick="playerAction('fury')">
+              <span class="action-icon">🔥</span>
+              <span class="action-name">FURIA</span>
+              <span class="action-desc">30–45 daño</span>
+            </button>
+            <button id="btn-magic" class="btn-action btn-magic" onclick="playerAction('magic')">
+              <span class="action-icon">✨</span>
+              <span class="action-name">MAGIA</span>
+              <span class="action-desc">Curar 10–20</span>
+            </button>
+          </div>
+        </div>
+        <!-- Panel de espera (turno del orco) -->
+        <div id="waiting-panel" class="waiting-panel hidden">
+          <div class="waiting-spinner"></div>
+          <p id="waiting-text">Thrall está pensando...</p>
+        </div>
+      </div>
+
+      <!-- Tarjeta del Orco (derecha) -->
+      <div class="fighter-card orc-side" id="card-orc">
+        <div class="fighter-portrait" id="portrait-orc">
+          <img src="assets/orc.jpg" alt="Orco"/>
+          <div class="active-frame orc-frame"></div>
+        </div>
+        <div class="fighter-info">
+          <div class="fighter-name" id="orc-name">THRALL</div>
+          <div class="hp-bar-container">
+            <div class="hp-label">❤️ VIDA</div>
+            <div class="hp-bar-bg">
+              <div class="hp-bar orc-hp" id="orc-hp-bar"></div>
+            </div>
+            <div class="hp-value" id="orc-hp-value">120 / 120</div>
+          </div>
+          <div class="shield-badge">🛡️ Escudo: <span id="orc-shield">5</span></div>
+          <div class="fury-badge">🔥 Furia: <span id="orc-fury">0</span></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- PANTALLA DE FIN -->
+  <div id="end-screen" class="screen">
+    <div class="end-bg"></div>
+    <div class="end-content">
+      <div id="result-portrait" class="result-portrait-container"></div>
+      <h2 id="result-title" class="result-title"></h2>
+      <p id="result-subtitle" class="result-subtitle"></p>
+      <div class="battle-summary">
+        <h3>📜 Crónica Final</h3>
+        <div id="end-log" class="end-log"></div>
+      </div>
+      <button class="btn-gold" onclick="restartGame()">🔄 JUGAR DE NUEVO</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
