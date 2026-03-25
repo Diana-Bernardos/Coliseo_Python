@@ -1,23 +1,28 @@
 # ⚔️ Coliseo de Batalla RPG
 
-Simulador de batalla por turnos entre un **Guerrero** y el Orco **Thrall**, desarrollado con Python (lógica OOP) y una interfaz web medieval interactiva.
+Simulador de batalla por turnos entre un **Guerrero** y un **Orco**, con:
+
+- `batalla_rpg.py`: versión consola (Python + POO)
+- `ui/`: interfaz web medieval interactiva (HTML/CSS/JS)
 
 ---
 
 ## 📁 Estructura del proyecto
 
 ```
-batalla-oop/
-├── batalla_rpg.py          # Versión consola (Python + POO)
+Coliseo_Python/
+├── batalla_rpg.py
 ├── README.md
-└── ui/                     # Interfaz web
-    ├── index.html          # Estructura HTML (3 pantallas)
-    ├── style.css           # Diseño medieval oscuro
-    ├── script.js           # Lógica del juego en JavaScript
+└── ui/
+    ├── index.html
+    ├── style.css
+    ├── script.js
     └── assets/
-        ├── background.png  # Fondo de batalla medieval
-        ├── warrior.jpg     # Retrato del Guerrero
-        └── orc.jpg         # Retrato de Thrall
+        ├── background.png
+        ├── warrior.jpg
+        ├── warrior.png
+        ├── orc.jpg
+        └── orc.png
 ```
 
 ---
@@ -32,74 +37,75 @@ batalla-oop/
 python batalla_rpg.py
 ```
 
-### Conceptos de POO aplicados
+### Mecánicas (consola)
+- Acciones del jugador: **Ataque**, **Furia**, **Magia**
+- Daño del jugador:
+  - **Ataque**: 20–30
+  - **Furia**: 40–50
+  - **Magia**: cura 10–20
+- Defensa / esquiva:
+  - **Guerrero**: 10% de esquiva; su escudo bloquea `escudo × 1.5`
+  - **Orco**: puede esquivar (probabilidad base ~14%); su escudo resta daño de forma normal
+- Orco y furia:
+  - **Ataque**: `15 + (furia × 2)` y luego `furia += 1`
+  - **Furia**: `(25–35) + furia` y luego `furia += 1`
+- Límite de combate: **10 turnos** (si nadie cae, empate)
+
+### POO aplicada (consola)
 | Concepto | Implementación |
-|----------|---------------|
-| **Clases** | `Personaje`, `Guerrero`, `Orco` |
-| **Herencia** | `Guerrero` y `Orco` heredan de `Personaje` |
-| **Polimorfismo** | `recibir_daño()` se comporta distinto en cada clase |
-| **Encapsulamiento** | Atributos y métodos propios por clase |
-| **Atributo especial** | `furia` del Orco aumenta su daño por turno |
+|----------|----------------|
+| Clases | `Personaje`, `Guerrero`, `Orco` |
+| Herencia | `Guerrero` y `Orco` heredan de `Personaje` |
+| Polimorfismo | `recibir_daño()` cambia según la clase |
+| Encapsulamiento | atributos y métodos por clase |
+| Estado especial | `furia` del Orco escala el daño |
 
 ---
 
-## 🌐 Interfaz Web
+## 🌐 Interfaz web
 
 ### Requisitos
-- Python 3.x (para el servidor local)
-- Navegador moderno (Chrome, Edge, Firefox)
+- Python 3.x (para levantar servidor local)
+- Navegador moderno (Chrome/Edge/Firefox)
 
-### Ejecutar paso a paso
-
-**1. Abre una terminal en la carpeta del proyecto**
-
-**2. Lanza el servidor local:**
+### Ejecutar
 ```bash
-python -m http.server 8080 --directory "ui"
+python -m http.server 8080 --directory ui
 ```
 
-**3. Abre el navegador y ve a:**
+Luego abre:
 ```
 http://localhost:8080
 ```
 
-**4. ¡A jugar!** Escribe el nombre de tu guerrero y pulsa ⚔️ COMENZAR BATALLA.
+### Mecánicas (web)
+La web está implementada en `ui/script.js` y puede diferir de la consola:
 
-> ⚠️ Mantén la terminal abierta mientras juegas.
-
----
-
-## 🎮 Mecánicas del juego
-
-| Acción | Efecto |
-|--------|--------|
-| ⚔️ **Ataque** | Inflige 18–28 puntos de daño |
-| 🔥 **Furia** | Inflige 30–45 puntos de daño |
-| ✨ **Magia** | Cura al personaje entre 10–20 HP |
-| 🛡️ **Escudo** | Reduce el daño recibido |
-| 💨 **Esquivar** | 10% de probabilidad de evitar el daño |
-
-### Personajes
-- **Guerrero** — 100 HP · Escudo 10 · Bloqueo reforzado (×1.5)
-- **Thrall (Orco)** — 120 HP · Escudo 5 · Furia acumulativa (+2 daño/turno)
-
-La batalla dura un máximo de **15 turnos**. Si ninguno cae, se declara empate.
+- Acciones del jugador: **Ataque**, **Furia**, **Magia**
+- Daño del jugador:
+  - **Ataque**: 18–28
+  - **Furia**: 30–45
+  - **Magia**: cura 10–20
+- Defensa / esquiva:
+  - **Guerrero**: 10% de esquiva; bloqueo `escudo × 1.5`
+  - **Orco**: 10% de esquiva; bloqueo `escudo` (sin multiplicador)
+- Orco y furia:
+  - **Ataque**: `15 + (furia × 2)` y luego `furia += 1`
+  - **Furia**: `(25–35) + furia` y luego `furia += 1`
+- Límite de combate: **15 turnos** (si nadie cae, empate)
 
 ---
 
 ## ✨ Características de la interfaz
-
-- Pantalla de presentación con transición animada de los personajes
-- Overlay de turno: cada vez que cambia el turno aparece el retrato del combatiente
+- Pantalla de presentación con transición animada
+- Overlay de turno con retrato del combatiente
 - Barras de vida dinámicas (cambian de color al bajar la vida)
-- Animación de temblor al recibir daño
+- Animación de impacto al recibir daño y efecto al curar
 - Crónica de batalla en tiempo real
-- Pantalla de victoria / derrota / empate con historial completo
+- Pantalla final con victoria / derrota / empate e historial
 
 ---
 
 ## 👩‍💻 Tecnologías
-
-- **Python 3** — Lógica OOP y servidor HTTP
-- **HTML5 / CSS3 / JavaScript** — Interfaz web
-- **Google Fonts** — Tipografía medieval (Cinzel, Crimson Text)
+- Python 3 (POO + servidor HTTP local)
+- HTML5 / CSS3 / JavaScript (interfaz web)

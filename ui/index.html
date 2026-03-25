@@ -7,7 +7,7 @@
   <meta name="description" content="Simulador de batalla turn-based entre Guerrero y Orco con efectos visuales épicos medievales."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=MedievalSharp&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -103,6 +103,11 @@
               <span class="action-icon">✨</span>
               <span class="action-name">MAGIA</span>
               <span class="action-desc">Curar 10–20</span>
+            </button>
+            <button id="btn-shield" class="btn-action btn-shield" onclick="playerAction('shield')">
+              <span class="action-icon">🛡️</span>
+              <span class="action-name">ESCUDO</span>
+              <span class="action-desc">Daño + Def</span>
             </button>
           </div>
         </div>

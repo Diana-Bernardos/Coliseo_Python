@@ -18,7 +18,7 @@
   --panel-bg: rgba(10, 8, 5, 0.82);
   --text-light: #e8dcc8;
   --text-gold: #d4a017;
-  --font-title: 'Cinzel', serif;
+  --font-title: 'MedievalSharp', cursive;
   --font-body: 'Crimson Text', serif;
   --transition-fast: 0.25s ease;
   --transition-med: 0.5s ease;
@@ -77,6 +77,8 @@ html, body {
   color: var(--gold-light);
   text-shadow: 0 0 20px var(--gold), 0 2px 4px #000, 0 0 60px rgba(212,160,23,0.4);
   letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 0.5rem;
   animation: titlePulse 3s ease-in-out infinite;
 }
 
@@ -490,6 +492,14 @@ html, body {
   box-shadow: 0 0 12px rgba(156, 39, 176, 0.3);
 }
 .btn-magic:not(:disabled):hover { box-shadow: 0 0 20px rgba(156, 39, 176, 0.6); }
+
+.btn-shield {
+  background: rgba(40, 60, 70, 0.7);
+  border-color: #607d8b;
+  color: #cfd8dc;
+  box-shadow: 0 0 12px rgba(96, 125, 139, 0.3);
+}
+.btn-shield:not(:disabled):hover { box-shadow: 0 0 20px rgba(96, 125, 139, 0.6); }
 
 .action-icon { font-size: 1.4rem; }
 .action-name {
