@@ -83,7 +83,7 @@ async function showTurnOverlay(who) {
     $('portrait-warrior').classList.add('active-turn');
     $('portrait-orc').classList.remove('active-turn');
   } else {
-    img.src = 'assets/orc.png';
+    img.src = 'assets/orc.jpg';
     text.textContent = '🔥 TURNO DE THRALL';
     text.className = 'turn-text orc-text';
 
@@ -268,6 +268,13 @@ async function playerAction(action) {
     addLog(`✨ ${STATE.playerName} invoca magia curativa!`, 'action-player');
     curaMagia('warrior');
     STATE.historial.push(`T${STATE.turn}: ${STATE.playerName} Magia`);
+  } else if (action === 'shield') {
+    const dmg = rand(10, 15);
+    STATE.playerShield += 2;
+    addLog(`🛡️ ¡Embate de Escudo! ${STATE.playerName} golpea con ${dmg} de daño. ¡Escudo aumentado!`, 'action-player');
+    const res = orcReceiveDamage(dmg);
+    $('warrior-shield').textContent = STATE.playerShield;
+    STATE.historial.push(`T${STATE.turn}: ${STATE.playerName} Escudo (+2 def)`);
   }
 
   updateHP();
@@ -287,9 +294,9 @@ async function playerAction(action) {
   await showTurnOverlay('orc');
   showWaiting(false);
 
-  // IA simple: elige aleatoriamente una accion entre atacar, furia o magia.
-  const actions = ['attack', 'fury', 'magic'];
-  const orcAction = actions[rand(0, 2)];
+  // IA simple: elige aleatoriamente una accion.
+  const actions = ['attack', 'fury', 'magic', 'roar'];
+  const orcAction = actions[rand(0, 3)];
 
   if (orcAction === 'attack') {
     // Su ataque base escala con la furia acumulada de turnos anteriores.
@@ -308,11 +315,16 @@ async function playerAction(action) {
     STATE.orcFury += 1;
     $('orc-fury').textContent = STATE.orcFury;
     STATE.historial.push(`T${STATE.turn}: Thrall FURIA`);
-  } else {
+  } else if (orcAction === 'magic') {
     // Si elige magia, renuncia a danar ese turno a cambio de recuperar vida.
     addLog(`🟢 Thrall ruge y recupera energía...`, 'action-orc');
     curaMagia('orc');
     STATE.historial.push(`T${STATE.turn}: Thrall Magia`);
+  } else if (orcAction === 'roar') {
+    STATE.orcFury += 2;
+    addLog(`🟢 ¡Rugido Aterrador! Thrall se enfurece. (+2 Furia)`, 'action-orc');
+    $('orc-fury').textContent = STATE.orcFury;
+    STATE.historial.push(`T${STATE.turn}: Thrall Rugido (+2 furia)`);
   }
 
   updateHP();
@@ -347,7 +359,7 @@ async function playerAction(action) {
 // =====================================================
 function setActionButtons(enabled) {
   // Habilita o deshabilita todos los botones del panel de acciones.
-  ['btn-attack', 'btn-fury', 'btn-magic'].forEach(id => {
+  ['btn-attack', 'btn-fury', 'btn-magic', 'btn-shield'].forEach(id => {
     $(id).disabled = !enabled;
   });
 
@@ -375,7 +387,7 @@ function endGame(winner) {
     resultTitle.textContent = `⚔️ ¡VICTORIA!`;
     resultSub.textContent = `¡${STATE.playerName} ha derrotado a Thrall!`;
   } else if (winner === 'orc') {
-    endPortrait.innerHTML = `<img src="assets/orc.png" alt="Thrall Victorioso"/>`;
+    endPortrait.innerHTML = `<img src="assets/orc.jpg" alt="Thrall Victorioso"/>`;
     resultTitle.textContent = `💀 DERROTA`;
     resultSub.textContent = `${STATE.playerName} ha sido vencido por Thrall...`;
   } else {
