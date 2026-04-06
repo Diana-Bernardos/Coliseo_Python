@@ -4,46 +4,84 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>⚔️ Coliseo de Batalla RPG</title>
-  <meta name="description" content="Simulador de batalla turn-based entre Guerrero y Orco con efectos visuales épicos medievales."/>
+  <meta name="description" content="Simulador de batalla turn-based con IA adaptativa, sistema de racha y múltiples clases."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=MedievalSharp&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-  <!-- PANTALLA DE INICIO -->
+  <!-- ===== PANTALLA DE INICIO ===== -->
   <div id="intro-screen" class="screen active">
     <div class="intro-bg"></div>
     <div class="intro-content">
       <h1 class="title-main">⚔️ COLISEO DE BATALLA</h1>
-      <p class="title-sub">El campo de batalla te espera</p>
-      <!-- Portraits de presentación con transición -->
+      <p class="title-sub">El campo de batalla te espera, guerrero</p>
+
+      <!-- Portraits -->
       <div class="intro-portraits">
-        <div class="portrait-card warrior-card" id="intro-warrior">
+        <div class="portrait-card warrior-card">
           <img src="assets/warrior.jpg" alt="Guerrero" />
           <div class="portrait-glow warrior-glow"></div>
           <span class="portrait-label">GUERRERO</span>
         </div>
         <div class="vs-badge">VS</div>
-        <div class="portrait-card orc-card" id="intro-orc">
+        <div class="portrait-card orc-card">
           <img src="assets/orc.jpg" alt="Orco" />
           <div class="portrait-glow orc-glow"></div>
           <span class="portrait-label">THRALL</span>
         </div>
       </div>
+
+      <!-- Name input -->
       <div class="name-input-container">
         <label for="player-name" class="input-label">✦ Nombre de tu Guerrero ✦</label>
         <input type="text" id="player-name" placeholder="Ej: Arturo" maxlength="20"/>
       </div>
+
+      <!-- Class selection -->
+      <div class="selection-section">
+        <div class="section-label">ELIGE TU CLASE</div>
+        <div class="class-selector">
+          <button class="class-btn selected" data-class="warrior" onclick="selectClass('warrior')">
+            <span class="class-icon">⚔️</span>
+            <span class="class-name">GUERRERO</span>
+            <span class="class-stats">130 HP / 12 ESC</span>
+          </button>
+          <button class="class-btn" data-class="mage" onclick="selectClass('mage')">
+            <span class="class-icon">🔮</span>
+            <span class="class-name">MAGO</span>
+            <span class="class-stats">85 HP / 4 ESC</span>
+          </button>
+          <button class="class-btn" data-class="rogue" onclick="selectClass('rogue')">
+            <span class="class-icon">🗡️</span>
+            <span class="class-name">PÍCARO</span>
+            <span class="class-stats">100 HP / 7 ESC</span>
+          </button>
+        </div>
+        <div id="class-preview" class="class-preview">⚔️ <strong>GUERRERO</strong>: Alta defensa, ataques consistentes</div>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="selection-section">
+        <div class="section-label">DIFICULTAD</div>
+        <div class="diff-selector">
+          <button class="diff-btn" data-diff="easy" onclick="selectDifficulty('easy')">FÁCIL</button>
+          <button class="diff-btn selected" data-diff="normal" onclick="selectDifficulty('normal')">NORMAL</button>
+          <button class="diff-btn" data-diff="hard" onclick="selectDifficulty('hard')">DIFÍCIL</button>
+        </div>
+      </div>
+
       <button id="start-btn" class="btn-gold" onclick="startGame()">⚔️ COMENZAR BATALLA</button>
     </div>
   </div>
 
-  <!-- PANTALLA DE BATALLA -->
+  <!-- ===== PANTALLA DE BATALLA ===== -->
   <div id="battle-screen" class="screen">
     <div class="battle-bg"></div>
-    <!-- Overlays de turno -->
+
+    <!-- Turn overlay -->
     <div id="turn-overlay" class="turn-overlay hidden">
       <div class="turn-portrait-container">
         <img id="turn-portrait-img" src="./assets/orc.jpg" alt="turno"/>
@@ -52,26 +90,30 @@
       <div id="turn-text" class="turn-text"></div>
     </div>
 
-    <!-- Header con turno actual -->
+    <!-- Streak banner -->
+    <div id="streak-banner" class="streak-banner hidden"></div>
+
+    <!-- Header -->
     <header class="battle-header">
       <div class="turn-badge">TURNO <span id="turn-number">1</span> / 15</div>
     </header>
 
-    <!-- Arena de batalla -->
+    <!-- Arena -->
     <main class="battle-arena">
 
-      <!-- Tarjeta del Guerrero (izquierda) -->
+      <!-- Warrior card -->
       <div class="fighter-card warrior-side" id="card-warrior">
         <div class="fighter-portrait" id="portrait-warrior">
           <img src="assets/warrior.jpg" alt="Guerrero"/>
           <div class="active-frame warrior-frame"></div>
+          <span id="warrior-class-icon" class="class-badge">⚔️</span>
         </div>
         <div class="fighter-info">
           <div class="fighter-name" id="warrior-name">GUERRERO</div>
           <div class="hp-bar-container">
             <div class="hp-label">❤️ VIDA</div>
             <div class="hp-bar-bg">
-              <div class="hp-bar warrior-hp" id="warrior-hp-bar"></div>
+              <div class="hp-bar warrior-hp" id="warrior-hp-bar" style="width:100%"></div>
             </div>
             <div class="hp-value" id="warrior-hp-value">100 / 100</div>
           </div>
@@ -79,13 +121,14 @@
         </div>
       </div>
 
-      <!-- Centro: batalla log y acciones -->
+      <!-- Center -->
       <div class="battle-center">
         <div class="battle-log-container">
           <h3 class="log-title">📜 Crónica de Batalla</h3>
           <div id="battle-log" class="battle-log"></div>
         </div>
-        <!-- Acciones del jugador -->
+
+        <!-- Action panel -->
         <div id="action-panel" class="action-panel">
           <p class="action-prompt">¡Es tu turno, elige tu acción!</p>
           <div class="action-buttons">
@@ -97,28 +140,29 @@
             <button id="btn-fury" class="btn-action btn-fury" onclick="playerAction('fury')">
               <span class="action-icon">🔥</span>
               <span class="action-name">FURIA</span>
-              <span class="action-desc">30–45 daño</span>
+              <span class="action-desc">35–50 · CD:3</span>
             </button>
             <button id="btn-magic" class="btn-action btn-magic" onclick="playerAction('magic')">
               <span class="action-icon">✨</span>
               <span class="action-name">MAGIA</span>
-              <span class="action-desc">Curar 10–20</span>
+              <span class="action-desc">Curar · CD:2</span>
             </button>
             <button id="btn-shield" class="btn-action btn-shield" onclick="playerAction('shield')">
               <span class="action-icon">🛡️</span>
               <span class="action-name">ESCUDO</span>
-              <span class="action-desc">Daño + Def</span>
+              <span class="action-desc">Daño+Def · CD:2</span>
             </button>
           </div>
         </div>
-        <!-- Panel de espera (turno del orco) -->
+
+        <!-- Waiting panel -->
         <div id="waiting-panel" class="waiting-panel hidden">
           <div class="waiting-spinner"></div>
           <p id="waiting-text">Thrall está pensando...</p>
         </div>
       </div>
 
-      <!-- Tarjeta del Orco (derecha) -->
+      <!-- Orc card -->
       <div class="fighter-card orc-side" id="card-orc">
         <div class="fighter-portrait" id="portrait-orc">
           <img src="assets/orc.jpg" alt="Orco"/>
@@ -129,7 +173,7 @@
           <div class="hp-bar-container">
             <div class="hp-label">❤️ VIDA</div>
             <div class="hp-bar-bg">
-              <div class="hp-bar orc-hp" id="orc-hp-bar"></div>
+              <div class="hp-bar orc-hp" id="orc-hp-bar" style="width:100%"></div>
             </div>
             <div class="hp-value" id="orc-hp-value">120 / 120</div>
           </div>
@@ -141,17 +185,33 @@
     </main>
   </div>
 
-  <!-- PANTALLA DE FIN -->
+  <!-- ===== PANTALLA DE FIN ===== -->
   <div id="end-screen" class="screen">
     <div class="end-bg"></div>
     <div class="end-content">
       <div id="result-portrait" class="result-portrait-container"></div>
       <h2 id="result-title" class="result-title"></h2>
       <p id="result-subtitle" class="result-subtitle"></p>
+
+      <!-- Global stats -->
+      <div class="global-stats">
+        <div class="stat-pill">🏆 <span id="stat-wins">0</span> victorias</div>
+        <div class="stat-pill">💀 <span id="stat-losses">0</span> derrotas</div>
+        <div class="stat-pill">🔥 Racha: <span id="stat-best-streak">0</span></div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="leaderboard">
+        <h3>🏅 Mejores Puntuaciones</h3>
+        <div id="leaderboard-list" class="leaderboard-list"></div>
+      </div>
+
+      <!-- Battle log summary -->
       <div class="battle-summary">
         <h3>📜 Crónica Final</h3>
         <div id="end-log" class="end-log"></div>
       </div>
+
       <button class="btn-gold" onclick="restartGame()">🔄 JUGAR DE NUEVO</button>
     </div>
   </div>
