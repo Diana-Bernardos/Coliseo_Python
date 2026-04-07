@@ -5,7 +5,10 @@
 **Current Version**: 3.0 Modular  
 **Sprint 1**: ✅ **COMPLETADO** - Refactor arquitectura (6 módulos, 100% v2.0 compatible)  
 **Sprint 2**: ✅ **COMPLETADO** - Roguelike Core System (30+ perks, Run system, Reward screen)  
-**Next Phase**: Sprint 3 - UI/UX Refinement (animations, polish)  
+**Sprint 3**: ✅ **COMPLETADO** - UI/UX Refinement (weapons, backgrounds, overlays)  
+**Sprint 4**: ✅ **COMPLETADO** - Monetización (ads hooks preparados)  
+**Sprint 5**: 🔄 **EN PROGRESO** - Mobile & Optimization (Capacitor setup, PWA, performance)  
+**Next Phase**: Sprint 6 - Launch Prep (Play Store, GitHub Pages)  
 **Timeline**: 6–8 semanas para MVP v3.0 listo para producción
 
 > 🚀 **Sprint 2 completado**: Sistema roguelike functional, perks system, leaderboard
@@ -131,22 +134,28 @@ Resumen ejecutivo de Sprint 1 completado.
 
 La arquitectura modular con sistema roguelike completamente implementado:
 
-### ✅ Sprint 1 - Arquitectura Base
-✅ Refactor monolítico → 6 módulos ES6  
-✅ Game State Management  
-✅ Combat Engine  
-✅ UI Renderer  
-✅ Ads Manager  
-✅ 100% compatible con v2.0  
+### ✅ Sprint 3 - UI/UX Refinement
+✅ Weapon & Background Selection UI  
+✅ Dynamic Battle Backgrounds  
+✅ Weapon Overlays on Characters  
+✅ Victory Actions per Class/Weapon  
+✅ Enhanced Mobile Responsiveness  
 
-### ✅ Sprint 2 - Roguelike Meta-Progresión  
-✅ 30+ perks balanceados (5 rarities)  
-✅ Sistema de Runs (carrera de combates)  
-✅ Reward Screen (selección de perks)  
-✅ Escalado de dificultad progresivo  
-✅ Leaderboard de top 10 runs  
-✅ Persistencia localStorage  
-✅ Dual mode: Classic + Roguelike  
+### ✅ Sprint 4 - Monetización  
+✅ Ads Manager Module  
+✅ Revive with Ad (30% HP)  
+✅ Double Reward with Ad  
+✅ Daily Bonus System  
+✅ Ad Hooks Ready for AdMob  
+
+### 🔄 Sprint 5 - Mobile & Optimization  
+✅ Capacitor Project Setup  
+✅ Build System (minification)  
+✅ PWA Features (Service Worker, Manifest)  
+✅ Performance Audit (Lighthouse 63%)  
+✅ Memory Optimization  
+⏳ APK Build (pending Ionic account)  
+⏳ Device Testing (pending APK)
 
 ---
 
@@ -261,6 +270,17 @@ mkdir -p ui/modules
 python -m http.server 8080 --directory ui
 # → http://localhost:8080
 ```
+
+**Nuevas Features Sprint 3:**
+- Selecciona clase, arma y fondo de batalla
+- Fondos dinámicos cambian durante combate
+- Overlay visual del arma en el guerrero
+- Acciones de victoria personalizadas
+
+**PWA Features Sprint 5:**
+- Instalable como app (Add to Home Screen)
+- Funciona offline con Service Worker
+- Performance optimizada (minificación)
 
 ### 🐍 Consola (Legacy)
 

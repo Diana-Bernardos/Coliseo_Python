@@ -1,3 +1,7 @@
+// LEGACY FILE
+// Este archivo queda solo como referencia historica de la version monolitica.
+// La aplicacion actual usa `script-modular.js`.
+
 // =====================================================
 //  RPG BATTLE GAME LOGIC v2.0 - Coliseo de Batalla
 //  Mejoras: IA adaptativa, racha, daño flotante,

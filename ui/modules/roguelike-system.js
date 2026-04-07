@@ -56,6 +56,30 @@ const PERKS_COMMON = {
       state.playerShield += 2;
     },
   },
+
+  HP_REGEN_3: {
+    id: 'HP_REGEN_3',
+    name: 'Regeneración +3',
+    description: 'Recuperas 3 HP al final de cada turno.',
+    icon: '🌿',
+    rarity: 'common',
+    stackable: true,
+    apply: (state) => {
+      state.regenPerTurn = (state.regenPerTurn || 0) + 3;
+    },
+  },
+
+  SHIELD_PLUS_3: {
+    id: 'SHIELD_PLUS_3',
+    name: '+3 Escudo/Batalla',
+    description: 'Comienzas combate con +3 escudo adicional.',
+    icon: '🛡️+',
+    rarity: 'common',
+    stackable: true,
+    apply: (state) => {
+      state.playerShield += 3;
+    },
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -107,6 +131,30 @@ const PERKS_UNCOMMON = {
     stackable: false,
     apply: (state) => {
       state.blockMultiplier = (state.blockMultiplier || 1) + 0.5;
+    },
+  },
+
+  ARMOR_PLATING: {
+    id: 'ARMOR_PLATING',
+    name: 'Placas de Armadura',
+    description: 'Incrementa tu bloqueo en 25%.',
+    icon: '🧱',
+    rarity: 'uncommon',
+    stackable: true,
+    apply: (state) => {
+      state.blockMultiplier = (state.blockMultiplier || 1.5) + 0.25;
+    },
+  },
+
+  MANA_SURGE: {
+    id: 'MANA_SURGE',
+    name: 'Oleada Mágica',
+    description: 'Reduce el cooldown de Magia en 1 turno.',
+    icon: '🔮⚡',
+    rarity: 'uncommon',
+    stackable: false,
+    apply: (state) => {
+      state.magicCDReduction = (state.magicCDReduction || 0) + 1;
     },
   },
 };
@@ -162,6 +210,30 @@ const PERKS_RARE = {
       state.shieldPersistent = true;
     },
   },
+
+  MAGIC_SURGE: {
+    id: 'MAGIC_SURGE',
+    name: 'Magia Potenciada',
+    description: 'Curación mágica un 20% más potente.',
+    icon: '✨💠',
+    rarity: 'rare',
+    stackable: true,
+    apply: (state) => {
+      state.healBonus = (state.healBonus || 0) + 0.20;
+    },
+  },
+
+  FURY_FOCUS: {
+    id: 'FURY_FOCUS',
+    name: 'Furia Focalizada',
+    description: 'Furia inflige +8 daño adicional.',
+    icon: '🔥🎯',
+    rarity: 'rare',
+    stackable: true,
+    apply: (state) => {
+      state.furyBonus = (state.furyBonus || 0) + 8;
+    },
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -213,6 +285,31 @@ const PERKS_EPIC = {
     stackable: false,
     apply: (state) => {
       state.firstTurn = true;
+    },
+  },
+
+  POWER_STRIKE: {
+    id: 'POWER_STRIKE',
+    name: 'Golpe Potente',
+    description: 'Tus ataques básicos infligen +8 daño si estás en buena forma.',
+    icon: '💥',
+    rarity: 'epic',
+    stackable: false,
+    apply: (state) => {
+      state.highHealthBonus = (state.highHealthBonus || 0) + 8;
+    },
+  },
+
+  ARCANE_FOCUS: {
+    id: 'ARCANE_FOCUS',
+    name: 'Foco Arcano',
+    description: 'Reduce el cooldown de Magia y Escudo en 1 turno.',
+    icon: '🌀',
+    rarity: 'epic',
+    stackable: false,
+    apply: (state) => {
+      state.magicCDReduction = (state.magicCDReduction || 0) + 1;
+      state.shieldCDReduction = (state.shieldCDReduction || 0) + 1;
     },
   },
 };
@@ -279,6 +376,30 @@ const PERKS_LEGENDARY = {
     stackable: false,
     apply: (state) => {
       state.secondWind = true;
+    },
+  },
+
+  ETERNAL_REGEN: {
+    id: 'ETERNAL_REGEN',
+    name: 'Regeneración Eterna',
+    description: 'Recuperas +8 HP al final de cada turno.',
+    icon: '🌟',
+    rarity: 'legendary',
+    stackable: false,
+    apply: (state) => {
+      state.regenPerTurn = (state.regenPerTurn || 0) + 8;
+    },
+  },
+
+  BERSERK: {
+    id: 'BERSERK',
+    name: 'Berserk',
+    description: 'Cuando estás herido, tus ataques hacen +15 daño.',
+    icon: '🩸',
+    rarity: 'legendary',
+    stackable: false,
+    apply: (state) => {
+      state.berserk = true;
     },
   },
 };

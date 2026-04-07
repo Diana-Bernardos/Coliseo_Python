@@ -1,0 +1,35 @@
+{
+  "name": "coliseo_python",
+  "version": "1.0.0",
+  "description": "**Current Version**: 3.0 Modular  \r **Sprint 1**: ✅ **COMPLETADO** - Refactor arquitectura (6 módulos, 100% v2.0 compatible)  \r **Sprint 2**: ✅ **COMPLETADO** - Roguelike Core System (30+ perks, Run system, Reward screen)  \r **Next Phase**: Sprint 3 - UI/UX Refinement (animations, polish)  \r **Timeline**: 6–8 semanas para MVP v3.0 listo para producción",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdirp dist/ui && powershell -Command \"Copy-Item -LiteralPath 'ui/index.html' -Destination 'dist/ui/index.html' -Force; Copy-Item -LiteralPath 'ui/script-modular.js' -Destination 'dist/ui/script-modular.js' -Force; Copy-Item -LiteralPath 'ui/manifest.json' -Destination 'dist/ui/manifest.json' -Force; Copy-Item -LiteralPath 'ui/sw.js' -Destination 'dist/ui/sw.js' -Force\" && ncp ui/assets dist/ui/assets && mkdirp dist/ui/modules && terser ui/modules/index.js -o dist/ui/modules/index.js && terser ui/modules/player-config.js -o dist/ui/modules/player-config.js && terser ui/modules/menu-controls.js -o dist/ui/modules/menu-controls.js && terser ui/modules/game-state.js -o dist/ui/modules/game-state.js && terser ui/modules/combat-engine.js -o dist/ui/modules/combat-engine.js && terser ui/modules/ui-renderer.js -o dist/ui/modules/ui-renderer.js && terser ui/modules/roguelike-system.js -o dist/ui/modules/roguelike-system.js && terser ui/modules/ads-manager.js -o dist/ui/modules/ads-manager.js && terser ui/modules/reward-screen.js -o dist/ui/modules/reward-screen.js && terser ui/modules/analytics.js -o dist/ui/modules/analytics.js && cleancss ui/style.css -o dist/ui/style.css",
+    "cap-build": "npm run build && npx cap sync android",
+    "test:smoke": "node tests/smoke-ui.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Diana-Bernardos/Coliseo_Python.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Diana-Bernardos/Coliseo_Python/issues"
+  },
+  "homepage": "https://github.com/Diana-Bernardos/Coliseo_Python#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0"
+  },
+  "devDependencies": {
+    "clean-css-cli": "^5.6.3",
+    "lighthouse": "^13.1.0",
+    "mkdirp": "^3.0.1",
+    "ncp": "^2.0.0",
+    "terser": "^5.46.1"
+  }
+}

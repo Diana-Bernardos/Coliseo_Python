@@ -3,6 +3,8 @@
  * Encapsula toda la lógica de renderización y actualización del DOM
  */
 
+import { WEAPON_DEFINITIONS, PLAYER_SKINS } from './game-state.js';
+
 const $ = id => document.getElementById(id);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -128,6 +130,26 @@ export function healEffect(who) {
   setTimeout(() => card.classList.remove('heal-flash'), 600);
 }
 
+export function showPerkNotification(perkName) {
+  const notification = document.createElement('div');
+  notification.className = 'perk-notification';
+  notification.innerHTML = `
+    <span class="notif-icon">✨</span>
+    <div>
+      <div><strong>Perk adquirido:</strong></div>
+      <div>${perkName}</div>
+    </div>
+  `;
+
+  document.body.appendChild(notification);
+  requestAnimationFrame(() => notification.classList.add('show'));
+
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => notification.remove(), 400);
+  }, 2600);
+}
+
 // ─── TURN OVERLAY ───
 export async function showTurnOverlay(who, state) {
   const overlay = $('turn-overlay');
@@ -139,8 +161,10 @@ export async function showTurnOverlay(who, state) {
   overlay.classList.remove('hidden');
 
   if (who === 'warrior') {
-    img.src = 'assets/warrior.jpg';
-    text.textContent = `⚔️ TURNO DE ${state.playerName.toUpperCase()}`;
+    const skin = PLAYER_SKINS[state.playerSkin] || PLAYER_SKINS.classic;
+    img.src = skin.image;
+    img.style.filter = skin.filter || 'none';
+    text.textContent = `⚔️ TURNO DE ${state.playerName.toUpperCase()} · ${skin.label.toUpperCase()}`;
     text.className = 'turn-text warrior-text';
     const portraitW = $('portrait-warrior');
     const portraitO = $('portrait-orc');
@@ -148,6 +172,7 @@ export async function showTurnOverlay(who, state) {
     if (portraitO) portraitO.classList.remove('active-turn');
   } else {
     img.src = 'assets/orc.jpg';
+    img.style.filter = 'none';
     text.textContent = '🔥 TURNO DE THRALL';
     text.className = 'turn-text orc-text';
     const portraitO = $('portrait-orc');
@@ -160,9 +185,68 @@ export async function showTurnOverlay(who, state) {
   overlay.classList.add('hidden');
 }
 
+export function updateBattleBackground(state) {
+  const battleBg = $('battle-bg');
+  if (!battleBg) return;
+  const classes = ['bg-forest', 'bg-ruins', 'bg-lava', 'bg-snow', 'bg-battle2', 'bg-battle3', 'bg-battle4', 'bg-battle5', 'bg-inecraf1', 'bg-nieve1'];
+  battleBg.classList.remove(...classes);
+  if (state.battleBackground) {
+    battleBg.classList.add(`bg-${state.battleBackground}`);
+  }
+}
+
+export function updateWeaponOverlay(state) {
+  const overlay = $('weapon-overlay');
+  if (!overlay) return;
+
+  const weapon = WEAPON_DEFINITIONS[state.playerWeapon];
+  if (weapon) {
+    overlay.textContent = weapon.icon;
+    overlay.classList.add('visible');
+  } else {
+    overlay.classList.remove('visible');
+  }
+}
+
+export function updatePlayerSkin(state) {
+  const portraitW = $('portrait-warrior');
+  const turnImg = $('turn-portrait-img');
+  const previewImg = $('skin-preview-image');
+  const previewName = $('skin-preview-name');
+  const previewDesc = $('skin-preview-desc');
+  const skinNameLabel = $('warrior-skin-name');
+  const skin = PLAYER_SKINS[state.playerSkin] || PLAYER_SKINS.classic;
+
+  if (portraitW) {
+    portraitW.innerHTML = `
+      <img src="${skin.image}" alt="${skin.label}" />
+      <div class="active-frame warrior-frame"></div>
+      <div id="weapon-overlay" class="weapon-overlay"></div>
+      <span id="warrior-class-icon" class="class-badge"></span>
+    `;
+    const img = portraitW.querySelector('img');
+    if (img) img.style.filter = skin.filter || 'none';
+  }
+
+  if (turnImg) {
+    turnImg.src = skin.image;
+    turnImg.style.filter = skin.filter || 'none';
+  }
+
+  if (previewImg) {
+    previewImg.src = skin.image;
+    previewImg.alt = skin.label;
+    previewImg.style.filter = skin.filter || 'none';
+  }
+
+  if (previewName) previewName.textContent = skin.label;
+  if (previewDesc) previewDesc.textContent = skin.description;
+  if (skinNameLabel) skinNameLabel.textContent = skin.label.toUpperCase();
+}
+
 // ─── SCREEN TRANSITIONS ───
 export function showScreen(screenName) {
-  const screens = ['intro-screen', 'battle-screen', 'end-screen'];
+  const screens = ['intro-screen', 'battle-screen', 'end-screen', 'reward-screen'];
   screens.forEach(screen => {
     const el = $(screen);
     if (el) el.classList.toggle('active', el.id === screenName);
@@ -176,15 +260,28 @@ export function renderLeaderboard(stats) {
 
   lb.innerHTML = '';
   if (stats.scores.length === 0) {
-    lb.innerHTML = '<p style="opacity:0.5;font-size:0.8rem">Sin registros aún</p>';
+    lb.innerHTML = '<p style="opacity:0.5;font-size:0.8rem;text-align:center;margin:20px 0">Sin registros aún</p>';
     return;
   }
 
   stats.scores.slice(0, 5).forEach((entry, i) => {
     const row = document.createElement('div');
     row.className = 'lb-row';
+    row.style.animationDelay = `${i * 0.1}s`;
+    row.style.animation = 'slideInLeft 0.5s ease forwards';
+    row.style.opacity = '0';
+
     const medal = ['🥇', '🥈', '🥉', '4.', '5.'][i];
-    row.innerHTML = `<span class="lb-rank">${medal}</span><span class="lb-name">${entry.name}</span><span class="lb-diff diff-${entry.diff}">${entry.diff}</span><span class="lb-score">${entry.score.toLocaleString()}</span>`;
+    const rankClass = i < 3 ? 'top-rank' : '';
+    const scoreFormatted = entry.score.toLocaleString();
+
+    row.innerHTML = `
+      <span class="lb-rank ${rankClass}">${medal}</span>
+      <span class="lb-name">${entry.name}</span>
+      <span class="lb-diff diff-${entry.diff}">${entry.diff.toUpperCase()}</span>
+      <span class="lb-score">${scoreFormatted}</span>
+    `;
+
     lb.appendChild(row);
   });
 }
@@ -202,9 +299,16 @@ export function renderEndScreen(state, winner) {
   endLog.innerHTML = '';
 
   if (winner === 'warrior') {
-    endPortrait.innerHTML = `<img src="assets/warrior.jpg" alt="Guerrero Victorioso"/>`;
+    const skin = PLAYER_SKINS[state.playerSkin] || PLAYER_SKINS.classic;
+    endPortrait.innerHTML = `<img src="${skin.image}" alt="${skin.label} Victorioso"/>`;
+    const endImg = endPortrait.querySelector('img');
+    if (endImg) endImg.style.filter = skin.filter || 'none';
     resultTitle.textContent = `⚔️ ¡VICTORIA!`;
     resultSub.textContent = `¡${state.playerName} ha derrotado a Thrall! Puntuación: ${state.score.toLocaleString()}`;
+    const resultAction = $('result-action');
+    if (resultAction) {
+      resultAction.textContent = state.getVictoryAction ? state.getVictoryAction() : `Celebró su victoria con estilo.`;
+    }
   } else if (winner === 'orc') {
     endPortrait.innerHTML = `<img src="assets/orc.jpg" alt="Thrall Victorioso"/>`;
     resultTitle.textContent = `💀 DERROTA`;

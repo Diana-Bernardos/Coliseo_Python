@@ -28,10 +28,7 @@ Sistema 100% compatible con v2.0, pero mejor estructurado para expansión futura
 ### En `ui/index.html`:
 
 ```html
-<!-- Reemplazar: -->
-<script src="script.js"></script>
-
-<!-- Con: -->
+<!-- Archivo activo: -->
 <script type="module" src="script-modular.js"></script>
 ```
 

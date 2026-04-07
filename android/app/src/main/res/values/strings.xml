@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Coliseo Roguelike</string>
+    <string name="title_activity_main">Coliseo Roguelike</string>
+    <string name="package_name">com.coliseo.roguelike</string>
+    <string name="custom_url_scheme">com.coliseo.roguelike</string>
+</resources>

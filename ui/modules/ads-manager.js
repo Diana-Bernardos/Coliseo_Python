@@ -3,6 +3,8 @@
  * Gestiona integración de anuncios (v3.0 ready para Google AdMob)
  */
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 export class AdsManager {
   constructor(isProduction = false) {
     this.isProduction = isProduction;
@@ -20,6 +22,7 @@ export class AdsManager {
   async showInterstitialAd() {
     if (!this.isProduction) {
       console.log('[ADS] Interstitial ad would show here');
+      await sleep(400);
       return true;
     }
 
@@ -44,17 +47,18 @@ export class AdsManager {
    */
   async showRewardedAd(rewardType = 'revive') {
     if (!this.isProduction) {
-      console.log(`[ADS] Rewarded ad (${rewardType}) would show here`);
-      return true; // Simulate success
+      const adLabel = this.getAdUnitId(rewardType);
+      console.log(`[ADS] Rewarded ad (${rewardType}) would show here -> ${adLabel}`);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return true; // Simulate success in dev mode
     }
 
     try {
       // Google AdMob plugin (future)
       /*
       if (window.admob) {
-        await admob.rewarded.load({ adUnitId: this.adUnitIds.rewarded });
+        await admob.rewarded.load({ adUnitId: this.getAdUnitId(rewardType) });
         await admob.rewarded.show();
-        // Returns reward object if user completes ad
         return true;
       }
       */
@@ -65,12 +69,32 @@ export class AdsManager {
     }
   }
 
+  getAdUnitId(reason = 'rewarded') {
+    return {
+      revive: this.adUnitIds.rewarded,
+      'double-reward': this.adUnitIds.rewarded,
+      'daily-bonus': this.adUnitIds.rewarded,
+      interstitial: this.adUnitIds.interstitial,
+      banner: this.adUnitIds.banner,
+      rewarded: this.adUnitIds.rewarded,
+    }[reason] || this.adUnitIds.rewarded;
+  }
+
   /**
    * Show banner ad (persistent, non-intrusive)
    */
   async showBannerAd() {
     if (!this.isProduction) {
-      console.log('[ADS] Banner ad would show here');
+      let banner = document.getElementById('ad-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'ad-banner';
+        banner.className = 'ad-banner';
+        banner.innerHTML = `<span>📣 Mock Ad — Monetización activa (dev mode)</span>`;
+        document.body.appendChild(banner);
+      }
+      banner.classList.add('visible');
+      console.log('[ADS] Banner ad mock visible');
       return true;
     }
 
@@ -94,6 +118,10 @@ export class AdsManager {
    */
   async hideBannerAd() {
     try {
+      const banner = document.getElementById('ad-banner');
+      if (banner) {
+        banner.classList.remove('visible');
+      }
       // Google AdMob plugin (future)
       /*
       if (window.admob) {

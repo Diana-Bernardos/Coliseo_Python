@@ -2,7 +2,7 @@
 
 **Duración Total**: 6–8 semanas  
 **Equipo Estimado**: 2–3 desarrolladores  
-**Status Sprint**: Inicial (Semana 1)
+**Status Sprint**: Sprint 2 completo, Sprint 3 en progreso
 
 ---
 

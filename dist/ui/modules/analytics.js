@@ -1,0 +1,1 @@
+export class Analytics{constructor(isProduction=false){this.isProduction=isProduction}trackEvent(eventName,params={}){if(!eventName)return;const payload={event:eventName,timestamp:(new Date).toISOString(),...params||{}};if(!this.isProduction){console.log(`[ANALYTICS] ${eventName}`);return}try{}catch(error){console.error("[ANALYTICS ERROR]",error)}}}

@@ -26,6 +26,8 @@ function createRewardScreenHTML() {
     <div class="screen-content">
       <h1 style="text-align: center; margin-bottom: 30px;">🎉 ¡VICTORIA!</h1>
       
+      <div class="reward-info" style="text-align: center; margin-bottom: 20px; color: #d0f7eb;"></div>
+      
       <div style="text-align: center; margin-bottom: 20px;">
         <p style="font-size: 1.2rem; color: #4ecdc4;">Selecciona 1 mejora para tu próximo combate:</p>
       </div>
@@ -58,6 +60,18 @@ function addRewardScreenCSS() {
   style.textContent = `
     #reward-perks-container {
       padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 18px;
+      width: min(100%, 980px);
+      margin: 0 auto;
+    }
+
+    @media (max-width: 840px) {
+      #reward-perks-container {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
     }
 
     .reward-perk {
@@ -165,6 +179,21 @@ export async function showRewardScreen(run, stats) {
 
   // Update stats display
   const runStats = run.getStats();
+
+  if (rewards.length === 0) {
+    const emptyMessage = document.createElement('div');
+    emptyMessage.style.color = '#ffcc80';
+    emptyMessage.style.fontSize = '1rem';
+    emptyMessage.style.padding = '24px';
+    emptyMessage.style.background = 'rgba(255,255,255,0.05)';
+    emptyMessage.style.borderRadius = '10px';
+    emptyMessage.style.textAlign = 'center';
+    emptyMessage.textContent = 'No hay mejoras nuevas disponibles. Sigue la batalla con las habilidades actuales.';
+
+    const container = $('reward-perks-container');
+    container.innerHTML = '';
+    container.appendChild(emptyMessage);
+  }
   const infoDiv = screen.querySelector('.reward-info');
   if (infoDiv) {
     infoDiv.innerHTML = `
@@ -176,6 +205,10 @@ export async function showRewardScreen(run, stats) {
   // Render perk cards
   const container = $('reward-perks-container');
   container.innerHTML = '';
+
+  // Hide any other screen and ensure reward screen is the only active one
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  screen.classList.add('active');
 
   let selectedPerk = null;
 
@@ -212,18 +245,30 @@ export async function showRewardScreen(run, stats) {
   const continueBtn = $('reward-continue-btn');
 
   return new Promise((resolve) => {
-    continueBtn.addEventListener('click', async () => {
-      if (selectedPerk) {
-        // Apply perk to run
-        run.selectPerk(selectedPerk);
+    continueBtn.disabled = true;
+    continueBtn.onclick = async () => {
+      if (rewards.length === 0) {
         continueBtn.textContent = 'Siguiendo...';
         continueBtn.disabled = true;
+        continueBtn.onclick = null;
         await sleep(600);
-        resolve(selectedPerk);
+        resolve(null);
+        return;
       }
-    });
+      if (!selectedPerk) return;
+      run.selectPerk(selectedPerk);
+      continueBtn.textContent = 'Siguiendo...';
+      continueBtn.disabled = true;
+      continueBtn.onclick = null;
+      await sleep(600);
+      resolve(selectedPerk);
+    };
 
-    // Enable button when perk selected
+    if (rewards.length === 0) {
+      continueBtn.disabled = false;
+      continueBtn.textContent = 'Continuar al próximo combate';
+    }
+
     document.querySelectorAll('.reward-perk').forEach(card => {
       card.addEventListener('click', () => {
         continueBtn.disabled = false;

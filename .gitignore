@@ -13,3 +13,14 @@ Thumbs.db
 # Archivos de IDE
 .vscode/
 *.code-workspace
+
+# Dependencias y builds locales
+node_modules/
+npm-debug.log*
+
+# Reportes locales
+lighthouse-report.json
+
+# Builds de sistema
+android/.gradle/
+android/app/build/
