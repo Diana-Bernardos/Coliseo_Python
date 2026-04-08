@@ -113,7 +113,12 @@ export const DIFFICULTY_MODS = {
   easy:   { orcHPMult: 0.75, orcDmgMult: 0.7,  smartWeight: 0.15 },
   normal: { orcHPMult: 1.0,  orcDmgMult: 1.0,  smartWeight: 0.40 },
   hard:   { orcHPMult: 1.35, orcDmgMult: 1.35, smartWeight: 0.75 },
+  insane: { orcHPMult: 1.70, orcDmgMult: 1.50, smartWeight: 0.90 },
 };
+
+export function getDifficultyModifiers(diff) {
+  return DIFFICULTY_MODS[diff] || DIFFICULTY_MODS.normal;
+}
 
 // ─── PERSISTENT STATS (Leaderboard, Streaks) ───
 export class PersistentStats {
@@ -326,8 +331,9 @@ export class GameState {
   }
 
   applyDifficulty(diff) {
-    const mods = DIFFICULTY_MODS[diff] || DIFFICULTY_MODS.normal;
-    this.difficulty = diff;
+    const validDifficulty = DIFFICULTY_MODS[diff] ? diff : 'normal';
+    const mods = getDifficultyModifiers(validDifficulty);
+    this.difficulty = validDifficulty;
     this.orcMaxHP = Math.round(120 * mods.orcHPMult);
     this.orcHP = this.orcMaxHP;
   }

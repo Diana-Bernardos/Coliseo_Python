@@ -536,7 +536,7 @@ export function scaleDifficultyForRun(runWins) {
   // Incrementar difficulty después de X victorias
   if (runWins < 2) return 'normal';
   if (runWins < 4) return 'hard';
-  return 'insane'; // Difficulty custom (futura expansion)
+  return 'insane'; // Difficulty custom (futura expansion) - ahora soportado por DIFFICULTY_MODS
 }
 
 // ─── LEADERBOARD (Mejores runs) ───

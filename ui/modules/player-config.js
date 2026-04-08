@@ -68,9 +68,9 @@ export function selectClass(state, cls, getById, saveConfig) {
 }
 
 export function selectDifficulty(state, diff, saveConfig) {
-  state.difficulty = diff;
+  state.difficulty = DIFFICULTY_MODS[diff] ? diff : 'normal';
   document.querySelectorAll('.diff-btn').forEach(b =>
-    b.classList.toggle('selected', b.dataset.diff === diff)
+    b.classList.toggle('selected', b.dataset.diff === state.difficulty)
   );
   saveConfig();
 }

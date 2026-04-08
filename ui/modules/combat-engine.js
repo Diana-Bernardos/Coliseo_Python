@@ -3,7 +3,7 @@
  * Encapsula toda la lógica de combate y daño
  */
 
-import { CLASS_STATS, DIFFICULTY_MODS } from './game-state.js';
+import { CLASS_STATS, getDifficultyModifiers } from './game-state.js';
 
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
@@ -181,7 +181,7 @@ export function healMagic(caster, state) {
 
 // ─── ORC AI ───
 export function orcChooseAction(state) {
-  const mods = DIFFICULTY_MODS[state.difficulty];
+  const mods = getDifficultyModifiers(state.difficulty);
   const smart = mods.smartWeight;
   const orcHPpct = state.orcHP / state.orcMaxHP;
   const playerHPpct = state.playerHP / state.playerMaxHP;
@@ -299,7 +299,7 @@ export function orcChooseAction(state) {
 }
 
 export function orcAttack(state) {
-  const mods = DIFFICULTY_MODS[state.difficulty];
+  const mods = getDifficultyModifiers(state.difficulty);
   const dmgBase = 15;
   const dmgTotal = Math.round((dmgBase + state.orcFury * 2) * mods.orcDmgMult);
   state.orcFury += 1;
@@ -307,14 +307,14 @@ export function orcAttack(state) {
 }
 
 export function orcFury(state) {
-  const mods = DIFFICULTY_MODS[state.difficulty];
+  const mods = getDifficultyModifiers(state.difficulty);
   const dmgFuria = Math.round((rand(25, 35) + state.orcFury) * mods.orcDmgMult);
   state.orcFury += 1;
   return dmgFuria;
 }
 
 export function orcMagic(state) {
-  const mods = DIFFICULTY_MODS[state.difficulty];
+  const mods = getDifficultyModifiers(state.difficulty);
   const dmgMagic = Math.round((rand(20, 35) + state.orcFury) * mods.orcDmgMult);
   state.orcFury += 1;
   return dmgMagic;
