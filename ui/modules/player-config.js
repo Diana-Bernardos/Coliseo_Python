@@ -77,9 +77,10 @@ export function selectDifficulty(state, diff, saveConfig) {
 
 export function selectWeapon(state, weaponId, getById, saveConfig) {
   state.playerWeapon = weaponId;
-  document.querySelectorAll('.weapon-card').forEach(card =>
-    card.classList.toggle('selected', card.dataset.weapon === weaponId)
-  );
+  const weaponSelect = getById('weapon-options');
+  if (weaponSelect) {
+    weaponSelect.value = weaponId;
+  }
   const weaponInfo = WEAPON_DEFINITIONS[weaponId];
   const preview = getById('weapon-preview');
   if (preview && weaponInfo) {
@@ -90,8 +91,10 @@ export function selectWeapon(state, weaponId, getById, saveConfig) {
 
 export function selectBackground(state, backgroundId, getById, saveConfig) {
   state.battleBackground = backgroundId;
-  const backgroundSelect = getById('background-options');
-  if (backgroundSelect) backgroundSelect.value = backgroundId;
+  const bgSelect = getById('background-options');
+  if (bgSelect) {
+    bgSelect.value = backgroundId;
+  }
   const preview = getById('background-preview');
   const bgInfo = BATTLEBACKGROUNDS[backgroundId];
   if (preview && bgInfo) {
@@ -104,7 +107,9 @@ export function selectSkin(state, skinId, getById, uiRenderer, saveConfig) {
   const previousDefaultName = getCharacterNameForSkin(state.playerSkin);
   state.playerSkin = skinId;
   const skinSelect = getById('skin-options');
-  if (skinSelect) skinSelect.value = skinId;
+  if (skinSelect) {
+    skinSelect.value = skinId;
+  }
   const nameInput = getById('player-name');
   const nextDefaultName = getCharacterNameForSkin(skinId);
   if (nameInput) {
@@ -127,48 +132,51 @@ export function selectSkin(state, skinId, getById, uiRenderer, saveConfig) {
 }
 
 export function renderSkinOptions(state, getById) {
-  const skinContainer = getById('skin-options');
-  if (!skinContainer) return;
+  const skinSelect = getById('skin-options');
+  if (!skinSelect) return;
 
-  skinContainer.innerHTML = '';
+  // Clear existing options except the placeholder
+  skinSelect.innerHTML = '<option value="">Selecciona una skin...</option>';
+
   Object.entries(PLAYER_SKINS).forEach(([id, skin]) => {
     const option = document.createElement('option');
     option.value = id;
-    option.textContent = skin.label;
-    skinContainer.appendChild(option);
+    option.textContent = `${skin.label} - ${skin.description}`;
+    if (state.playerSkin === id) {
+      option.selected = true;
+    }
+    skinSelect.appendChild(option);
   });
-  skinContainer.value = state.playerSkin;
 }
 
 export function renderSelectionOptions(state, getById, onSelectWeapon) {
-  const weaponContainer = getById('weapon-options');
-  const bgContainer = getById('background-options');
+  const weaponSelect = getById('weapon-options');
+  const bgSelect = getById('background-options');
 
-  if (weaponContainer) {
-    weaponContainer.innerHTML = '';
+  if (weaponSelect) {
+    weaponSelect.innerHTML = '<option value="">Selecciona un arma...</option>';
     Object.entries(WEAPON_DEFINITIONS).forEach(([id, weapon]) => {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = `option-card weapon-card${state.playerWeapon === id ? ' selected' : ''}`;
-      card.dataset.weapon = id;
-      card.innerHTML = `
-        <div class="option-icon">${weapon.icon}</div>
-        <div class="option-title">${weapon.name}</div>
-        <div class="option-desc">${weapon.description}</div>
-      `;
-      card.addEventListener('click', () => onSelectWeapon(id));
-      weaponContainer.appendChild(card);
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = `${weapon.icon} ${weapon.name}: ${weapon.description}`;
+      if (state.playerWeapon === id) {
+        option.selected = true;
+      }
+      weaponSelect.appendChild(option);
     });
+    weaponSelect.addEventListener('change', (e) => onSelectWeapon(e.target.value));
   }
 
-  if (bgContainer) {
-    bgContainer.innerHTML = '';
+  if (bgSelect) {
+    bgSelect.innerHTML = '<option value="">Selecciona un campo de batalla...</option>';
     Object.entries(BATTLEBACKGROUNDS).forEach(([id, bg]) => {
       const option = document.createElement('option');
       option.value = id;
-      option.textContent = bg.label;
-      bgContainer.appendChild(option);
+      option.textContent = `${bg.label} - ${bg.description}`;
+      if (state.battleBackground === id) {
+        option.selected = true;
+      }
+      bgSelect.appendChild(option);
     });
-    bgContainer.value = state.battleBackground;
   }
 }

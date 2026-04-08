@@ -7,14 +7,43 @@ import { CLASS_STATS, DIFFICULTY_MODS } from './game-state.js';
 
 const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-// ─── DAMAGE CALCULATIONS ───
+// ─── COMBO SYSTEM ───
+export function checkCombo(state, action) {
+  const comboWindow = 3000; // 3 seconds for combo
+  const now = Date.now();
+
+  if (!state.lastActionTime || (now - state.lastActionTime) > comboWindow) {
+    state.comboCount = 1;
+    state.lastActionTime = now;
+    return { combo: false, multiplier: 1 };
+  }
+
+  state.comboCount = Math.min(state.comboCount + 1, 5);
+  state.lastActionTime = now;
+
+  const comboMultiplier = 1 + (state.comboCount * 0.15); // Up to 1.75x damage
+  return {
+    combo: state.comboCount > 1,
+    multiplier: comboMultiplier,
+    count: state.comboCount
+  };
+}
+
+// ─── ADVANCED DAMAGE CALCULATIONS ───
 export function calculatePlayerDamage(action, state) {
   let base = 0;
   switch (action) {
     case 'attack': base = rand(18, 28); break;
     case 'fury': base = rand(35, 50); break;
+    case 'magic': base = rand(25, 40); break;
     case 'shield': base = rand(10, 15); break;
     default: return 0;
+  }
+
+  // Check for combo
+  const combo = checkCombo(state, action);
+  if (combo.combo) {
+    base = Math.round(base * combo.multiplier);
   }
 
   base += state.damageBonus || 0;
@@ -157,18 +186,116 @@ export function orcChooseAction(state) {
   const orcHPpct = state.orcHP / state.orcMaxHP;
   const playerHPpct = state.playerHP / state.playerMaxHP;
 
-  if (Math.random() < smart) {
-    // Low HP -> prefer heal or roar
-    if (orcHPpct < 0.25) return Math.random() < 0.6 ? 'magic' : 'roar';
-    // High fury -> unleash
-    if (state.orcFury >= 4) return Math.random() < 0.7 ? 'fury' : 'attack';
-    // Player low HP -> aggressive
-    if (playerHPpct < 0.3) return Math.random() < 0.8 ? 'fury' : 'attack';
-    // Early game -> build fury
-    if (state.turn <= 4) return Math.random() < 0.5 ? 'roar' : 'attack';
+  // Initialize behavior patterns if not exists
+  if (!state.orcBehavior) {
+    state.orcBehavior = {
+      lastActions: [],
+      aggressionLevel: 0.5,
+      healingCooldown: 0,
+      furyBuildup: 0
+    };
   }
 
-  return ['attack', 'fury', 'magic', 'roar'][rand(0, 3)];
+  const behavior = state.orcBehavior;
+
+  // Update healing cooldown
+  if (behavior.healingCooldown > 0) behavior.healingCooldown--;
+
+  // Track recent actions for pattern recognition
+  if (behavior.lastActions.length > 3) {
+    behavior.lastActions.shift();
+  }
+
+  // Adaptive aggression based on HP and turn
+  if (orcHPpct < 0.3) {
+    behavior.aggressionLevel = Math.max(0.8, behavior.aggressionLevel + 0.1);
+  } else if (orcHPpct > 0.7) {
+    behavior.aggressionLevel = Math.min(0.3, behavior.aggressionLevel - 0.05);
+  }
+
+  // Fury buildup logic
+  if (state.orcFury >= 4) {
+    behavior.furyBuildup++;
+  } else {
+    behavior.furyBuildup = Math.max(0, behavior.furyBuildup - 1);
+  }
+
+  let actionWeights = {
+    attack: 0.4,
+    fury: 0.2,
+    magic: 0.2,
+    roar: 0.2
+  };
+
+  // Smart AI adjustments
+  if (Math.random() < smart) {
+    // Emergency fury buildup when low HP
+    if (orcHPpct < 0.25) {
+      actionWeights.roar = 0.8;
+      actionWeights.attack = 0.1;
+      actionWeights.fury = 0.05;
+      actionWeights.magic = 0.05;
+    }
+    // Build up fury when advantageous
+    else if (state.orcFury < 4 && playerHPpct > 0.6 && behavior.furyBuildup < 3) {
+      actionWeights.attack = 0.6;
+      actionWeights.fury = 0.1;
+      actionWeights.roar = 0.2;
+      actionWeights.magic = 0.1;
+    }
+    // Use fury when ready and player is weak
+    else if (state.orcFury >= 4 && (playerHPpct < 0.4 || behavior.furyBuildup >= 3)) {
+      actionWeights.fury = 0.7;
+      actionWeights.attack = 0.2;
+      actionWeights.magic = 0.05;
+      actionWeights.roar = 0.05;
+    }
+    // Intimidate early game
+    else if (state.turn <= 4) {
+      actionWeights.roar = 0.4;
+      actionWeights.attack = 0.4;
+      actionWeights.fury = 0.1;
+      actionWeights.magic = 0.1;
+    }
+    // Aggressive when player is low
+    else if (playerHPpct < 0.3) {
+      actionWeights.fury = 0.5;
+      actionWeights.attack = 0.4;
+      actionWeights.magic = 0.05;
+      actionWeights.roar = 0.05;
+    }
+    // Balanced play
+    else {
+      actionWeights.attack = 0.5;
+      actionWeights.fury = 0.2;
+      actionWeights.magic = 0.15;
+      actionWeights.roar = 0.15;
+    }
+  }
+
+  // Apply aggression modifier
+  actionWeights.fury *= (1 + behavior.aggressionLevel);
+  actionWeights.attack *= (1 + behavior.aggressionLevel * 0.5);
+
+  // Normalize weights
+  const totalWeight = Object.values(actionWeights).reduce((a, b) => a + b, 0);
+  for (let action in actionWeights) {
+    actionWeights[action] /= totalWeight;
+  }
+
+  // Select action based on weights
+  let random = Math.random();
+  let cumulative = 0;
+
+  for (let action in actionWeights) {
+    cumulative += actionWeights[action];
+    if (random <= cumulative) {
+      behavior.lastActions.push(action);
+      return action;
+    }
+  }
+
+  return 'attack'; // Fallback
 }
 
 export function orcAttack(state) {
@@ -184,6 +311,13 @@ export function orcFury(state) {
   const dmgFuria = Math.round((rand(25, 35) + state.orcFury) * mods.orcDmgMult);
   state.orcFury += 1;
   return dmgFuria;
+}
+
+export function orcMagic(state) {
+  const mods = DIFFICULTY_MODS[state.difficulty];
+  const dmgMagic = Math.round((rand(20, 35) + state.orcFury) * mods.orcDmgMult);
+  state.orcFury += 1;
+  return dmgMagic;
 }
 
 export function orcRoar(state) {

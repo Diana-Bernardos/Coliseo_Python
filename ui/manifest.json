@@ -2,7 +2,7 @@
   "name": "Coliseo Roguelike",
   "short_name": "Coliseo",
   "description": "Combate por turnos con sistema roguelike",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#d4a017",

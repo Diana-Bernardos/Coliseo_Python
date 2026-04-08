@@ -46,16 +46,16 @@ export const WEAPON_DEFINITIONS = {
 };
 
 export const BATTLEBACKGROUNDS = {
-  forest: { label: 'Bosque Encantado', className: 'bg-forest', description: 'Arboledas hechizadas, niebla y ruinas olvidadas.' },
-  ruins: { label: 'Ruinas Antiguas', className: 'bg-ruins', description: 'Vestigios de una civilización perdida bajo el polvo.' },
-  lava: { label: 'Río de Lava', className: 'bg-lava', description: 'Corrientes ardientes y cenizas danzantes en el aire.' },
-  snow: { label: 'Campos de Nieve', className: 'bg-snow', description: 'Mesetas heladas donde la luz corta como cuchillo.' },
-  battle2: { label: 'Arena Ígnea', className: 'bg-battle2', description: 'Un coliseo candente forjado en furia y fuego.' },
-  battle3: { label: 'Templo Arcano', className: 'bg-battle3', description: 'Pilares místicos y sellos de magia ancestral.' },
-  battle4: { label: 'Fortaleza Tenebrosa', className: 'bg-battle4', description: 'Murallas sombrías que susurran pactos de guerra.' },
-  battle5: { label: 'Ruinas Sagradas', className: 'bg-battle5', description: 'Altares rotos y reliquias bendecidas por tormentas.' },
-  inecraf1: { label: 'Caverna Cristal', className: 'bg-inecraf1', description: 'Galerías brillantes donde los cristales laten a cada paso.' },
-  nieve1: { label: 'Ventisca Helada', className: 'bg-nieve1', description: 'Un viento mortal que transforma el terreno en hielo.' },
+  forest: { label: 'Bosque Encantado', className: 'bg-forest', description: 'Arboledas hechizadas, niebla y ruinas olvidadas.', image: 'assets/background.png' },
+  ruins: { label: 'Ruinas Antiguas', className: 'bg-ruins', description: 'Vestigios de una civilización perdida bajo el polvo.', image: 'assets/background.png' },
+  lava: { label: 'Río de Lava', className: 'bg-lava', description: 'Corrientes ardientes y cenizas danzantes en el aire.', image: 'assets/background.png' },
+  snow: { label: 'Campos de Nieve', className: 'bg-snow', description: 'Mesetas heladas donde la luz corta como cuchillo.', image: 'assets/nieve1.jpg' },
+  battle2: { label: 'Arena Ígnea', className: 'bg-battle2', description: 'Un coliseo candente forjado en furia y fuego.', image: 'assets/batalla2.jpg' },
+  battle3: { label: 'Templo Arcano', className: 'bg-battle3', description: 'Pilares místicos y sellos de magia ancestral.', image: 'assets/batalla3.jpg' },
+  battle4: { label: 'Fortaleza Tenebrosa', className: 'bg-battle4', description: 'Murallas sombrías que susurran pactos de guerra.', image: 'assets/batalla4.jpg' },
+  battle5: { label: 'Ruinas Sagradas', className: 'bg-battle5', description: 'Altares rotos y reliquias bendecidas por tormentas.', image: 'assets/batalla5.jpg' },
+  inecraf1: { label: 'Caverna Cristal', className: 'bg-inecraf1', description: 'Galerías brillantes donde los cristales laten a cada paso.', image: 'assets/inecraf1.jpg' },
+  nieve1: { label: 'Ventisca Helada', className: 'bg-nieve1', description: 'Un viento mortal que transforma el terreno en hielo.', image: 'assets/nieve1.jpg' },
 };
 
 export const PLAYER_SKINS = {

@@ -4,13 +4,13 @@
  * v3.0 Sprint 2: Roguelike Core System integrado
  */
 
-import { GameState, PersistentStats, CLASS_STATS } from './game-state.js';
 import * as CombatEngine from './combat-engine.js';
-import { Run, getRewardPerks, scaleDifficultyForRun, RunLeaderboard } from './roguelike-system.js';
 import * as UIRenderer from './ui-renderer.js';
 import { showRewardScreen, hideRewardScreen, initRewardScreen } from './reward-screen.js';
 import { AdsManager, shouldShowInterstitial, offerReviveWithAd, offerDoubleRewardWithAd, claimDailyBonusWithAd } from './ads-manager.js';
 import { Analytics } from './analytics.js';
+import { GameState, PersistentStats, CLASS_STATS } from './game-state.js';
+import { Run, getRewardPerks, scaleDifficultyForRun, RunLeaderboard } from './roguelike-system.js';
 import {
   loadPlayerConfig as loadConfigUtil,
   savePlayerConfig as saveConfigUtil,
@@ -330,21 +330,31 @@ export async function playerAction(action) {
 
   // PLAYER ACTION
   if (action === 'attack') {
+    const combo = CombatEngine.checkCombo(state, action);
     const dmg = CombatEngine.calculatePlayerDamage('attack', state);
+    if (combo.combo) {
+      UIRenderer.showComboIndicator(combo);
+      UIRenderer.addLog(`🔥 ¡COMBO x${combo.count}! Daño aumentado!`, 'combo');
+    }
     playSfx('attack');
     UIRenderer.addLog(`⚔️ ${state.playerName} lanza un Tajo con ${dmg} de daño!`, 'action-player');
     const result = CombatEngine.orcReceiveDamage(dmg, state);
     UIRenderer.shakeCard('orc');
-    UIRenderer.spawnFloatingNumber('orc', result.damage + (result.isCrit ? '!' : ''), 'damage');
+    UIRenderer.spawnFloatingNumber('orc', result.damage + (result.isCrit ? '!' : ''), combo.combo ? 'combo' : 'damage');
     UIRenderer.addLog(result.message, 'damage');
     state.addHistory(state.turn, `${state.playerName} Ataque`, state.playerName);
   } else if (action === 'fury') {
+    const combo = CombatEngine.checkCombo(state, action);
     const dmg = CombatEngine.calculatePlayerDamage('fury', state);
+    if (combo.combo) {
+      UIRenderer.showComboIndicator(combo);
+      UIRenderer.addLog(`🔥 ¡COMBO x${combo.count}! Daño aumentado!`, 'combo');
+    }
     playSfx('fury');
     UIRenderer.addLog(`🔥 ¡FURIA! ${state.playerName} embiste con ${dmg} de daño!`, 'action-player');
     const result = CombatEngine.orcReceiveDamage(dmg, state);
     UIRenderer.shakeCard('orc');
-    UIRenderer.spawnFloatingNumber('orc', result.damage, 'damage');
+    UIRenderer.spawnFloatingNumber('orc', result.damage, combo.combo ? 'combo' : 'damage');
     UIRenderer.addLog(result.message, 'damage');
     state.furyCD = Math.max(0, 3 - (state.furyCDReduction || 0));
     if (state.furyChain && dmg > 50) {
@@ -353,14 +363,20 @@ export async function playerAction(action) {
     }
     state.addHistory(state.turn, `${state.playerName} FURIA`, state.playerName);
   } else if (action === 'magic') {
+    const combo = CombatEngine.checkCombo(state, action);
+    const dmg = CombatEngine.calculatePlayerDamage('magic', state);
+    if (combo.combo) {
+      UIRenderer.showComboIndicator(combo);
+      UIRenderer.addLog(`🔥 ¡COMBO x${combo.count}! Daño aumentado!`, 'combo');
+    }
     playSfx('magic');
-    UIRenderer.addLog(`✨ ${state.playerName} invoca magia curativa!`, 'action-player');
-    const heal = CombatEngine.healMagic('player', state);
-    UIRenderer.healEffect('warrior');
-    UIRenderer.spawnFloatingNumber('warrior', heal.amount, 'heal');
-    UIRenderer.addLog(heal.message, 'heal');
-    state.magicCD = Math.max(0, 2 - (state.magicCDReduction || 0));
-    state.addHistory(state.turn, `${state.playerName} Magia`, state.playerName);
+    UIRenderer.addLog(`✨ ¡MAGIA! ${state.playerName} lanza un hechizo con ${dmg} de daño!`, 'action-player');
+    const result = CombatEngine.orcReceiveDamage(dmg, state);
+    UIRenderer.shakeCard('orc');
+    UIRenderer.spawnFloatingNumber('orc', result.damage, combo.combo ? 'combo' : 'damage');
+    UIRenderer.addLog(result.message, 'damage');
+    state.magicCD = Math.max(0, 4 - (state.magicCDReduction || 0));
+    state.addHistory(state.turn, `${state.playerName} MAGIA`, state.playerName);
   } else if (action === 'shield') {
     const dmg = CombatEngine.calculatePlayerDamage('shield', state);
     playSfx('shield');
@@ -413,12 +429,13 @@ export async function playerAction(action) {
     UIRenderer.spawnFloatingNumber('warrior', result.damage, 'damage');
     UIRenderer.addLog(result.message, 'damage');
   } else if (orcAction === 'magic') {
+    const dmg = CombatEngine.orcMagic(state);
     playSfx('magic');
-    UIRenderer.addLog(`🟢 Thrall gruñe y se recupera...`, 'action-orc');
-    const heal = CombatEngine.healMagic('orc', state);
-    UIRenderer.healEffect('orc');
-    UIRenderer.spawnFloatingNumber('orc', heal.amount, 'heal');
-    UIRenderer.addLog(heal.message, 'heal');
+    UIRenderer.addLog(`✨ ¡Thrall lanza un hechizo! ${dmg} daño!`, 'action-orc');
+    const result = CombatEngine.playerReceiveDamage(dmg, state);
+    UIRenderer.shakeCard('warrior');
+    UIRenderer.spawnFloatingNumber('warrior', result.damage, 'damage');
+    UIRenderer.addLog(result.message, 'damage');
   } else if (orcAction === 'roar') {
     const roar = CombatEngine.orcRoar(state);
     UIRenderer.addLog(roar.message, 'action-orc');
@@ -694,13 +711,17 @@ export function initGame() {
   document.querySelectorAll('.diff-btn').forEach(btn => {
     btn.addEventListener('click', () => selectDifficulty(btn.dataset.diff));
   });
+  
+  // Bind skin dropdown
   const skinSelect = $('skin-options');
-  const bgSelect = $('background-options');
   if (skinSelect) {
-    skinSelect.addEventListener('change', e => selectSkin(e.target.value));
+    skinSelect.addEventListener('change', (e) => selectSkin(e.target.value));
   }
+  
+  // Bind background dropdown
+  const bgSelect = $('background-options');
   if (bgSelect) {
-    bgSelect.addEventListener('change', e => selectBackground(e.target.value));
+    bgSelect.addEventListener('change', (e) => selectBackground(e.target.value));
   }
 
   analytics.trackEvent('app_init', { loaded: true });

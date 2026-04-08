@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>âš”ï¸ Coliseo de Batalla RPG</title>
-  <meta name="description" content="Simulador de batalla turn-based con IA adaptativa, sistema de racha y mÃºltiples clases."/>
+  <title>⚔️ Coliseo de Batalla RPG</title>
+  <meta name="description" content="Simulador de batalla turn-based con IA adaptativa, sistema de racha y múltiples clases."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
@@ -18,7 +18,7 @@
   <div id="intro-screen" class="screen active">
     <div class="intro-bg"></div>
     <div class="intro-content">
-      <h1 class="title-main">âš”ï¸ COLISEO DE BATALLA</h1>
+      <h1 class="title-main">⚔️ COLISEO DE BATALLA</h1>
       <p class="title-sub">El campo de batalla te espera, guerrero</p>
 
       <!-- Portraits -->
@@ -38,7 +38,7 @@
 
       <!-- Name input -->
       <div class="name-input-container">
-        <label for="player-name" class="input-label">âœ¦ Nombre de tu Guerrero âœ¦</label>
+        <label for="player-name" class="input-label">✦ Nombre de tu Guerrero ✦</label>
         <input type="text" id="player-name" placeholder="Ej: Arturo" maxlength="20"/>
       </div>
 
@@ -47,66 +47,74 @@
         <div class="section-label">ELIGE TU CLASE</div>
         <div class="class-selector">
           <button class="class-btn selected" data-class="warrior">
-            <span class="class-icon">âš”ï¸</span>
+            <span class="class-icon">⚔️</span>
             <span class="class-name">GUERRERO</span>
             <span class="class-stats">130 HP / 12 ESC</span>
           </button>
           <button class="class-btn" data-class="mage">
-            <span class="class-icon">ðŸ”®</span>
+            <span class="class-icon">🔮</span>
             <span class="class-name">MAGO</span>
             <span class="class-stats">85 HP / 4 ESC</span>
           </button>
           <button class="class-btn" data-class="rogue">
-            <span class="class-icon">ðŸ—¡ï¸</span>
-            <span class="class-name">PÃCARO</span>
+            <span class="class-icon">🗡️</span>
+            <span class="class-name">PÍCARO</span>
             <span class="class-stats">100 HP / 7 ESC</span>
           </button>
           <button class="class-btn" data-class="ranger">
-            <span class="class-icon">ðŸ¹</span>
+            <span class="class-icon">🏹</span>
             <span class="class-name">GUARDABOSQUES</span>
             <span class="class-stats">110 HP / 5 ESC</span>
           </button>
         </div>
-        <div id="class-preview" class="class-preview">âš”ï¸ <strong>GUERRERO</strong>: Alta defensa, ataques consistentes</div>
+        <div id="class-preview" class="class-preview">⚔️ <strong>GUERRERO</strong>: Alta defensa, ataques consistentes</div>
       </div>
 
       <div class="selection-section">
         <div class="section-label">ELIGE TU SKIN</div>
         <div class="select-wrap">
-          <select id="skin-options" class="option-select" aria-label="Seleccionar skin"></select>
+          <select id="skin-options" class="option-select">
+            <option value="">Selecciona una skin...</option>
+          </select>
         </div>
         <div id="skin-preview-card" class="selection-preview-card">
           <img id="skin-preview-image" src="assets/warrior.jpg" alt="Preview de skin" />
           <div class="selection-preview-copy">
-            <div id="skin-preview-name" class="selection-preview-name">ClÃ¡sico</div>
+            <div id="skin-preview-name" class="selection-preview-name">Clásico</div>
             <div id="skin-preview-character" class="selection-preview-character">Personaje: Uthred</div>
-            <div id="skin-preview-desc" class="selection-preview-desc">Retrato estÃ¡ndar del campeÃ³n mÃ¡s icÃ³nico.</div>
+            <div id="skin-preview-desc" class="selection-preview-desc">Retrato estándar del campeón más icónico.</div>
           </div>
         </div>
-        <div id="skin-preview" class="class-preview">ðŸ‘¤ Skin clÃ¡sico del guerrero.</div>
+        <div id="skin-preview" class="class-preview">👤 Skin clásico del guerrero.</div>
       </div>
 
       <div class="selection-section">
         <div class="section-label">EQUIPA TU ARMA</div>
-        <div id="weapon-options" class="option-grid"></div>
-        <div id="weapon-preview" class="class-preview">ðŸ—¡ï¸ Espada Larga: AÃ±ade +4 daÃ±o de ataque fÃ­sico.</div>
+        <div class="select-wrap">
+          <select id="weapon-options" class="option-select">
+            <option value="">Selecciona un arma...</option>
+          </select>
+        </div>
+        <div id="weapon-preview" class="class-preview">🗡️ Espada Larga: Añade +4 daño de ataque físico.</div>
       </div>
 
       <div class="selection-section">
         <div class="section-label">ESCOGE EL CAMPO DE BATALLA</div>
         <div class="select-wrap">
-          <select id="background-options" class="option-select" aria-label="Seleccionar fondo"></select>
+          <select id="background-options" class="option-select">
+            <option value="">Selecciona un campo de batalla...</option>
+          </select>
         </div>
-        <div id="background-preview" class="class-preview">ðŸŒ„ Bosque - Entre Ã¡rboles y ruinas antiguas.</div>
+        <div id="background-preview" class="class-preview">🌄 Bosque - Entre árboles y ruinas antiguas.</div>
       </div>
 
       <!-- Difficulty -->
       <div class="selection-section">
         <div class="section-label">DIFICULTAD</div>
         <div class="diff-selector">
-          <button class="diff-btn" data-diff="easy">FÃCIL</button>
+          <button class="diff-btn" data-diff="easy">FÁCIL</button>
           <button class="diff-btn selected" data-diff="normal">NORMAL</button>
-          <button class="diff-btn" data-diff="hard">DIFÃCIL</button>
+          <button class="diff-btn" data-diff="hard">DIFÍCIL</button>
         </div>
       </div>
 
@@ -115,7 +123,7 @@
         <button id="btn-daily-bonus" class="btn-small btn-gold">Bonus Diario</button>
       </div>
 
-      <button id="btn-start" class="btn-gold">âš”ï¸ COMENZAR BATALLA</button>
+      <button id="btn-start" class="btn-gold">⚔️ COMENZAR BATALLA</button>
     </div>
   </div>
 
@@ -126,7 +134,7 @@
     <!-- Turn overlay -->
     <div id="turn-overlay" class="turn-overlay hidden">
       <div class="turn-portrait-container">
-        <img id="turn-portrait-img" src="./assets/orc.jpg" alt="turno"/>
+        <img id="turn-portrait-img" src="assets/orc.jpg" alt="turno"/>
         <div id="turn-flash" class="turn-flash"></div>
       </div>
       <div id="turn-text" class="turn-text"></div>
@@ -149,52 +157,52 @@
           <img src="assets/warrior.jpg" alt="Guerrero"/>
           <div class="active-frame warrior-frame"></div>
           <div id="weapon-overlay" class="weapon-overlay"></div>
-          <span id="warrior-class-icon" class="class-badge">âš”ï¸</span>
+          <span id="warrior-class-icon" class="class-badge">⚔️</span>
         </div>
         <div class="fighter-info">
           <div class="fighter-name" id="warrior-name">GUERRERO</div>
-          <div class="fighter-skin-name" id="warrior-skin-name">CLÃSICO</div>
+          <div class="fighter-skin-name" id="warrior-skin-name">CLÁSICO</div>
           <div class="hp-bar-container">
-            <div class="hp-label">â¤ï¸ VIDA</div>
+            <div class="hp-label">❤️ VIDA</div>
             <div class="hp-bar-bg">
               <div class="hp-bar warrior-hp" id="warrior-hp-bar" style="width:100%"></div>
             </div>
             <div class="hp-value" id="warrior-hp-value">100 / 100</div>
           </div>
-          <div class="shield-badge">ðŸ›¡ï¸ Escudo: <span id="warrior-shield">10</span></div>
+          <div class="shield-badge">🛡️ Escudo: <span id="warrior-shield">10</span></div>
         </div>
       </div>
 
       <!-- Center -->
       <div class="battle-center">
         <div class="battle-log-container">
-          <h3 class="log-title">ðŸ“œ CrÃ³nica de Batalla</h3>
+          <h3 class="log-title">📜 Crónica de Batalla</h3>
           <div id="battle-log" class="battle-log"></div>
         </div>
 
         <!-- Action panel -->
         <div id="action-panel" class="action-panel">
-          <p class="action-prompt">Â¡Es tu turno, elige tu acciÃ³n!</p>
+          <p class="action-prompt">¡Es tu turno, elige tu acción!</p>
           <div class="action-buttons">
             <button id="btn-attack" class="btn-action btn-attack">
-              <span class="action-icon">âš”ï¸</span>
+              <span class="action-icon">⚔️</span>
               <span class="action-name">ATAQUE</span>
-              <span class="action-desc">18â€“28 daÃ±o</span>
+              <span class="action-desc">18–28 daño</span>
             </button>
             <button id="btn-fury" class="btn-action btn-fury">
-              <span class="action-icon">ðŸ”¥</span>
+              <span class="action-icon">🔥</span>
               <span class="action-name">FURIA</span>
-              <span class="action-desc">35â€“50 Â· CD:3</span>
+              <span class="action-desc">35–50 · CD:3</span>
             </button>
             <button id="btn-magic" class="btn-action btn-magic">
-              <span class="action-icon">âœ¨</span>
+              <span class="action-icon">✨</span>
               <span class="action-name">MAGIA</span>
-              <span class="action-desc">Curar Â· CD:2</span>
+              <span class="action-desc">Curar · CD:2</span>
             </button>
             <button id="btn-shield" class="btn-action btn-shield">
-              <span class="action-icon">ðŸ›¡ï¸</span>
+              <span class="action-icon">🛡️</span>
               <span class="action-name">ESCUDO</span>
-              <span class="action-desc">DaÃ±o+Def Â· CD:2</span>
+              <span class="action-desc">Daño+Def · CD:2</span>
             </button>
           </div>
         </div>
@@ -202,7 +210,7 @@
         <!-- Waiting panel -->
         <div id="waiting-panel" class="waiting-panel hidden">
           <div class="waiting-spinner"></div>
-          <p id="waiting-text">Thrall estÃ¡ pensando...</p>
+          <p id="waiting-text">Thrall está pensando...</p>
         </div>
       </div>
 
@@ -221,8 +229,8 @@
             </div>
             <div class="hp-value" id="orc-hp-value">120 / 120</div>
           </div>
-          <div class="shield-badge">ðŸ›¡ï¸ Escudo: <span id="orc-shield">5</span></div>
-          <div class="fury-badge">ðŸ”¥ Furia: <span id="orc-fury">0</span></div>
+          <div class="shield-badge">🛡️ Escudo: <span id="orc-shield">5</span></div>
+          <div class="fury-badge">🔥 Furia: <span id="orc-fury">0</span></div>
         </div>
       </div>
 
@@ -240,24 +248,24 @@
 
       <!-- Global stats -->
       <div class="global-stats">
-        <div class="stat-pill">ðŸ† <span id="stat-wins">0</span> victorias</div>
-        <div class="stat-pill">ðŸ’€ <span id="stat-losses">0</span> derrotas</div>
-        <div class="stat-pill">ðŸ”¥ Racha: <span id="stat-best-streak">0</span></div>
+        <div class="stat-pill">🏆 <span id="stat-wins">0</span> victorias</div>
+        <div class="stat-pill">👀 <span id="stat-losses">0</span> derrotas</div>
+        <div class="stat-pill">🔥 Racha: <span id="stat-best-streak">0</span></div>
       </div>
 
       <!-- Leaderboard -->
       <div class="leaderboard">
-        <h3>ðŸ… Mejores Puntuaciones</h3>
+        <h3>🥇 Mejores Puntuaciones</h3>
         <div id="leaderboard-list" class="leaderboard-list"></div>
       </div>
 
       <!-- Battle log summary -->
       <div class="battle-summary">
-        <h3>ðŸ“œ CrÃ³nica Final</h3>
+        <h3>📜 Crónica Final</h3>
         <div id="end-log" class="end-log"></div>
       </div>
 
-      <button id="btn-restart" class="btn-gold">ðŸ”„ JUGAR DE NUEVO</button>
+      <button id="btn-restart" class="btn-gold">🔄 JUGAR DE NUEVO</button>
     </div>
   </div>
 

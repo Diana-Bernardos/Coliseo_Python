@@ -22,7 +22,28 @@ export function addLog(message, type = '') {
   log.scrollTop = log.scrollHeight;
 }
 
-// ─── FLOATING DAMAGE NUMBERS ───
+// ─── COMBO SYSTEM ───
+export function showComboIndicator(comboData) {
+  if (!comboData.combo) return;
+
+  // Remove existing combo indicator
+  const existing = document.querySelector('.combo-indicator');
+  if (existing) existing.remove();
+
+  const indicator = document.createElement('div');
+  indicator.className = 'combo-indicator';
+  indicator.innerHTML = `🔥 COMBO! <span class="combo-count">${comboData.count}x</span>`;
+
+  document.body.appendChild(indicator);
+
+  setTimeout(() => {
+    if (indicator.parentNode) {
+      indicator.remove();
+    }
+  }, 2000);
+}
+
+// ─── ENHANCED FLOATING NUMBERS ───
 export function spawnFloatingNumber(who, value, type = 'damage') {
   const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
   if (!card) return;
@@ -115,19 +136,67 @@ export function showWaiting(show) {
 export function shakeCard(who) {
   const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
   if (!card) return;
-  card.classList.remove('shake');
+  card.classList.remove('hit', 'critical-hit', 'power-impact');
   void card.offsetWidth; // Trigger reflow
-  card.classList.add('shake');
-  setTimeout(() => card.classList.remove('shake'), 500);
+  card.classList.add('hit');
+  setTimeout(() => card.classList.remove('hit'), 600);
+}
+
+// Animación de golpe crítico con más oomph
+export function criticalHitEffect(who) {
+  const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
+  if (!card) return;
+  card.classList.remove('critical-hit');
+  void card.offsetWidth;
+  card.classList.add('critical-hit', 'power-impact');
+  setTimeout(() => {
+    card.classList.remove('critical-hit', 'power-impact');
+  }, 700);
 }
 
 export function healEffect(who) {
   const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
   if (!card) return;
-  card.classList.remove('heal-flash');
+  card.classList.remove('heal-flash', 'healing-glow');
   void card.offsetWidth;
-  card.classList.add('heal-flash');
-  setTimeout(() => card.classList.remove('heal-flash'), 600);
+  card.classList.add('heal-flash', 'healing-glow');
+  setTimeout(() => {
+    card.classList.remove('heal-flash', 'healing-glow');
+  }, 700);
+}
+
+// Efecto de escudo activado
+export function shieldActivateEffect(who) {
+  const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
+  if (!card) return;
+  card.classList.remove('shield-activate', 'block');
+  void card.offsetWidth;
+  card.classList.add('shield-activate', 'block');
+  setTimeout(() => {
+    card.classList.remove('shield-activate', 'block');
+  }, 500);
+}
+
+// Efecto de energía elevada (Furia)
+export function furyChargeEffect(who) {
+  const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
+  if (!card) return;
+  card.classList.remove('energy-surge');
+  void card.offsetWidth;
+  card.classList.add('energy-surge');
+  setTimeout(() => card.classList.remove('energy-surge'), 600);
+}
+
+// Efecto de evasión rápida
+export function dodgeEffect(who) {
+  const card = who === 'warrior' ? $('card-warrior') : $('card-orc');
+  if (!card) return;
+  card.classList.remove('quick-dodge', 'dodge');
+  void card.offsetWidth;
+  card.classList.add('quick-dodge', 'dodge');
+  setTimeout(() => {
+    card.classList.remove('quick-dodge', 'dodge');
+  }, 400);
 }
 
 export function showPerkNotification(perkName) {
